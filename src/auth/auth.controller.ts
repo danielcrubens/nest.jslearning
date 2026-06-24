@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Prisma } from 'src/generated/prisma/client';
 
@@ -7,6 +7,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
   signin(@Body() body: Prisma.UserCreateInput) {
     return this.authService.signin(body);
   }
