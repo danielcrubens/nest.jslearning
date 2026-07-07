@@ -27,7 +27,7 @@ export class AnswersController {
   ) {
     return this.answersService.create(
       createAnswerDto,
-      req.sub,
+      req.sub.sub,
       Number(questionId),
     );
   }
