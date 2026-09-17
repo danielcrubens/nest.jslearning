@@ -14,7 +14,9 @@ export class QuestionsService {
   }
 
   async findAll() {
-    return await this.prisma.questions.findMany();
+    return await this.prisma.questions.findMany({
+      include: { user: true },
+    });
   }
 
   async findOne(id: number) {

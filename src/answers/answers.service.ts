@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { PrismaService } from 'src/database/prisma.service';
+import { Prisma } from '../generated/prisma/client.js';
 
 @Injectable()
 export class AnswersService {
@@ -32,14 +33,34 @@ export class AnswersService {
     return this.prisma.answers.findUnique({ where: { id } });
   }
 
-  update(id: number, updateAnswerDto: UpdateAnswerDto) {
-    return this.prisma.answers.update({
-      where: { id },
-      data: updateAnswerDto,
-    });
+  async update(id: number, updateAnswerDto: UpdateAnswerDto) {
+    try {
+      return await this.prisma.answers.update({
+        where: { id },
+        data: updateAnswerDto,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`Answer with id ${id} not found`);
+      }
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return this.prisma.answers.delete({ where: { id } });
+  async remove(id: number) {
+    try {
+      return await this.prisma.answers.delete({ where: { id } });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`Answer with id ${id} not found`);
+      }
+      throw error;
+    }
   }
 }
