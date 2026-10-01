@@ -8,17 +8,20 @@ import {
   Delete,
   Request,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AnswersService } from './answers.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiTags('answers')
 @Controller('answers')
 export class AnswersController {
   constructor(private readonly answersService: AnswersService) {}
 
   @Post(':questionId')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   create(
     @Body() createAnswerDto: CreateAnswerDto,
@@ -33,6 +36,7 @@ export class AnswersController {
   }
 
   @Get()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   findAll() {
     return this.answersService.findAll();
@@ -44,12 +48,14 @@ export class AnswersController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
     return this.answersService.update(+id, updateAnswerDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.answersService.remove(+id);

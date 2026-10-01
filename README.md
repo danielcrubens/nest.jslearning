@@ -17,6 +17,7 @@ Praticar os fundamentos do NestJS a partir de um caso real: organização em mó
 | `bcrypt` | Hash de senha |
 | `class-validator` + `class-transformer` | Validação e transformação de DTOs |
 | `@nestjs/mapped-types` | `PartialType` para gerar DTOs de update |
+| `@nestjs/swagger` | Documentação OpenAPI interativa (UI em `/docs`, JSON em `/docs-json`), com plugin do CLI inferindo os schemas dos DTOs |
 | Jest + Supertest | Testes unitários e e2e |
 | `dotenv` | Leitura do `.env` |
 
@@ -38,6 +39,7 @@ npx prisma generate   # client gerado em src/generated/prisma
 
 # 4. Rodar
 npm run start:dev     # modo watch em http://localhost:3000
+# Docs interativas (Swagger): http://localhost:3000/docs — JSON em /docs-json
 
 # Testes
 npm run test          # unitários
@@ -119,6 +121,7 @@ test/
 | Migrações | Migração inicial versionada em `prisma/migrations` | `prisma/migrations/` |
 | Entidades | Classes espelhando os models do Prisma para tipar as respostas | `src/*/entities/*.entity.ts` |
 | Testes (estrutura) | Specs unitários por controller/service/guard e e2e com Supertest (boilerplate do CLI) | `src/**/*.spec.ts`, `test/app.e2e-spec.ts` |
+| Swagger/OpenAPI | `DocumentBuilder` + `SwaggerModule` servindo UI em `/docs` e JSON em `/docs-json`; `@ApiTags` por controller e `@ApiBearerAuth()` nas rotas com guard; plugin do CLI (`nest-cli.json`) inferindo tipos e validators dos DTOs sem `@ApiProperty` manual | `src/main.ts`, `nest-cli.json`, `src/*/**.controller.ts` |
 
 ## Endpoints
 
@@ -210,4 +213,4 @@ curl -X POST http://localhost:3000/answers/1 \
 - **Hash de senha também no update**: `updateUser` grava `data` direto no Prisma — um `PATCH` com `password` salvaria a senha em texto puro.
 - **Autorização (além de autenticação)**: qualquer usuário autenticado consegue editar/excluir perguntas, respostas e usuários de terceiros. Próximo passo natural: checagem de ownership (ou RBAC com `@Roles()` + `RolesGuard`).
 - **Atualizar os testes**: os specs são o boilerplate "should be defined" e o e2e ainda espera `GET /` retornando "Hello World!" (rota que não existe). Cobrir signin, criação de pergunta/resposta e os cenários 404/409.
-- **Estudar em seguida**: `@nestjs/config` (hoje as envs são lidas via `process.env` + dotenv direto), Swagger/OpenAPI, exception filters globais, interceptors (ex.: `ClassSerializerInterceptor` para omitir a senha sem `select` manual) e paginação nas listagens.
+- **Estudar em seguida**: `@nestjs/config` (hoje as envs são lidas via `process.env` + dotenv direto), exception filters globais, interceptors (ex.: `ClassSerializerInterceptor` para omitir a senha sem `select` manual), autorização com `@Roles()` + `RolesGuard` e paginação nas listagens.
